@@ -67,7 +67,6 @@ public class CombinationTest {
                 "3H", "AD", "5H", "AC", "7H", "AS", "6H", "9C", "4H", "3C");
     }
 
-    //    'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'
     @Test
     public void validStraight() throws Exception {
         combinationAppliesToCards(
@@ -82,6 +81,20 @@ public class CombinationTest {
                 "6S", "2S", "9C", "3S", "KD", "5S", "TH", "TD", "AD", "4S");
     }
 
+    //    'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'
+    @Test
+    public void validThreeOfAKind() throws Exception {
+        combinationAppliesToCards(
+                THREE_OF_A_KIND,
+                "KS", "AH", "2H", "3C", "4H", "KC", "2C", "TC", "2D", "AS");
+    }
+
+    @Test
+    public void invalidThreeOfAKind() throws Exception {
+        combinationDoesNotApplyToCards(
+                THREE_OF_A_KIND,
+                "AS", "8C", "KH", "3S", "QH", "TH", "JC", "7C", "4C", "2D");
+    }
 
     private static void combinationAppliesToCards(Combination combination, String... codes) {
         combinationAppliesToCards(combination, cards(codes), true);
