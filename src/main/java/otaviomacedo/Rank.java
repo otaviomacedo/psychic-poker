@@ -8,6 +8,7 @@ import java.util.List;
 public class Rank implements Comparable<Rank>{
 
     private static final List<Character> SORTED_VALUES = Arrays.asList('A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2');
+    private static final List<Character> ALTERNATIVE_SORTED_VALUES = Arrays.asList('K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'A');
     private final char code;
 
     public Rank(char code) {
@@ -16,20 +17,29 @@ public class Rank implements Comparable<Rank>{
 
     @Override
     public int compareTo(Rank o) {
-        return this.index().compareTo(o.index());
+        return this.index(SORTED_VALUES).compareTo(o.index(SORTED_VALUES));
     }
 
     public static boolean inSequence(List<Rank> ranks){
-        int sum = 0;
-        for (Rank rank : ranks) {
-            sum += rank.index();
+        for (int i = 1; i < ranks.size(); i++) {
+            if (ranks.get(i).index(SORTED_VALUES) > ranks.get(i-1).index(SORTED_VALUES) + 1){
+                return false;
+            }
         }
-
-        return sum == ((ranks.get(0).index() + ranks.get(ranks.size() - 1).index()) * ranks.size()) / 2;
+        return true;
     }
 
-    private Integer index(){
-        return SORTED_VALUES.indexOf(this.code);
+    public static boolean inAlternativeSequence(List<Rank> ranks){
+        for (int i = 1; i < ranks.size(); i++) {
+            if (ranks.get(i).index(ALTERNATIVE_SORTED_VALUES) > ranks.get(i-1).index(ALTERNATIVE_SORTED_VALUES) + 1){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Integer index(List<Character> reference){
+        return reference.indexOf(this.code);
     }
 
     @Override

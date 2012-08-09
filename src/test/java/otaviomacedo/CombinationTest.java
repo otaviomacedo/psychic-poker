@@ -67,6 +67,21 @@ public class CombinationTest {
                 "3H", "AD", "5H", "AC", "7H", "AS", "6H", "9C", "4H", "3C");
     }
 
+    //    'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'
+    @Test
+    public void validStraight() throws Exception {
+        combinationAppliesToCards(
+                STRAIGHT,
+                "AC", "2D", "9C", "3S", "KD", "5S", "4D", "KS", "AS", "4C");
+    }
+
+    @Test
+    public void invalidStraight() throws Exception {
+        combinationDoesNotApplyToCards(
+                STRAIGHT,
+                "6S", "2S", "9C", "3S", "KD", "5S", "TH", "TD", "AD", "4S");
+    }
+
 
     private static void combinationAppliesToCards(Combination combination, String... codes) {
         combinationAppliesToCards(combination, cards(codes), true);

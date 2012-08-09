@@ -69,6 +69,10 @@ public class Card implements Comparable<Card> {
         return Rank.inSequence(Lists.transform(cards, TO_RANK));
     }
 
+    public static boolean areInAlternativeSequence(List<Card> cards) {
+        return Rank.inAlternativeSequence(Lists.transform(cards, TO_RANK));
+    }
+
     @Override
     public String toString() {
         return rank.toString() + suit.toString();

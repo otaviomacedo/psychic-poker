@@ -22,7 +22,7 @@ public enum Combination implements Predicate<Deck> {
         public boolean apply(Deck deck) {
             Set<Iterable<Card>> hands = generateAllHands(deck);
             for (Iterable<Card> hand : hands) {
-                if (thereIsOnlyOneSuit(hand) && cardsAreInSequence(hand)) {
+                if (thereIsOnlyOneSuit(hand) && (cardsAreInSequence(hand) || cardsAreInAlternativeSequence(hand))) {
                     return true;
                 }
             }
@@ -113,7 +113,7 @@ public enum Combination implements Predicate<Deck> {
         public boolean apply(Deck deck) {
             Set<Iterable<Card>> hands = generateAllHands(deck);
             for (Iterable<Card> hand : hands) {
-                if (cardsAreInSequence(hand) && thereAreAtLeastNSuits(hand, 2)) {
+                if ((cardsAreInSequence(hand) || cardsAreInAlternativeSequence(hand)) && thereAreAtLeastNSuits(hand, 2)) {
                     return true;
                 }
             }
@@ -222,6 +222,10 @@ public enum Combination implements Predicate<Deck> {
 
     private static boolean cardsAreInSequence(Iterable<Card> hand) {
         return Card.areInSequence(Ordering.natural().sortedCopy(hand));
+    }
+
+    private static boolean cardsAreInAlternativeSequence(Iterable<Card> hand) {
+        return Card.areInAlternativeSequence(Ordering.natural().sortedCopy(hand));
     }
 
     private int value;
