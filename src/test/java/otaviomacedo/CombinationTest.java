@@ -110,6 +110,27 @@ public class CombinationTest {
                 "AH", "2C", "9S", "AD", "3C", "QH", "KS", "5S", "JD", "4D");
     }
 
+    @Test
+    public void validOnePair() throws Exception {
+        combinationAppliesToCards(
+                ONE_PAIR,
+                "6C", "9C", "8C", "2D", "7C", "2H", "TC", "4C", "9S", "AH");
+    }
+
+    @Test
+    public void invalidOnePair() throws Exception {
+        combinationDoesNotApplyToCards(
+                ONE_PAIR,
+                "AH", "2C", "9S", "8D", "3C", "QH", "KS", "5S", "JD", "4D");
+    }
+
+    @Test
+    public void everythingCanBeHighestCard() throws Exception {
+        combinationAppliesToCards(
+                HIGHEST_CARD,
+                "AH", "2C", "9S", "8D", "3C", "QH", "KS", "5S", "JD", "4D");
+    }
+
     private static void combinationAppliesToCards(Combination combination, String... codes) {
         combinationAppliesToCards(combination, cards(codes), true);
     }
