@@ -5,9 +5,9 @@ public class Player {
     private final Iterable<Deck> deckSource;
     private final ResultWriter resultWriter;
 
-    public Player(ResultWriter resultWriter, Iterable<Deck> deckSource) {
-        this.resultWriter = resultWriter;
+    public Player(Iterable<Deck> deckSource, ResultWriter resultWriter) {
         this.deckSource = deckSource;
+        this.resultWriter = resultWriter;
     }
 
     public void play(){

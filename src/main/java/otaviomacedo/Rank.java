@@ -29,4 +29,9 @@ public class Rank implements Comparable<Rank>{
     private Integer index(){
         return SORTED_VALUES.indexOf(this.code);
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(code);
+    }
 }

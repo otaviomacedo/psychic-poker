@@ -258,7 +258,7 @@ public enum Combination implements Predicate<Deck> {
         int start = 0, end = 5;
 
         while (end <= cards.size()) {
-            hands.add(cards.subList(start, end));
+            hands.add(cards.subList(start++, end++));
         }
         return hands;
     }

@@ -1,23 +1,32 @@
 package otaviomacedo;
 
-import java.awt.image.BufferedImage;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Iterator;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.transform;
 
 public class DeckParser implements Iterable<Deck> {
 
+    private final List<Deck> decks = newArrayList();
 
-    public DeckParser(BufferedReader reader) throws IOException {
-        while (reader.ready()) {
-            String line = reader.readLine();
-
+    public DeckParser(Reader r) throws IOException {
+        BufferedReader reader = new BufferedReader(r);
+        String line;
+        while ((line = reader.readLine()) != null){
+            List<String> codes = ImmutableList.copyOf(line.split(" "));
+            decks.add(new Deck(transform(codes, Card.FROM_CODE)));
         }
-        reader.close();
     }
 
     @Override
     public Iterator<Deck> iterator() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return decks.iterator();
     }
 }
