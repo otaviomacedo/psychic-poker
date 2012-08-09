@@ -96,6 +96,20 @@ public class CombinationTest {
                 "AS", "8C", "KH", "3S", "QH", "TH", "JC", "7C", "4C", "2D");
     }
 
+    @Test
+    public void validTwoPairs() throws Exception {
+        combinationAppliesToCards(
+                TWO_PAIRS,
+                "AH", "2C", "9S", "AD", "3C", "QH", "KS", "JS", "JD", "KD");
+    }
+
+    @Test
+    public void invalidTwoPairs() throws Exception {
+        combinationDoesNotApplyToCards(
+                TWO_PAIRS,
+                "AH", "2C", "9S", "AD", "3C", "QH", "KS", "5S", "JD", "4D");
+    }
+
     private static void combinationAppliesToCards(Combination combination, String... codes) {
         combinationAppliesToCards(combination, cards(codes), true);
     }

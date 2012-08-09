@@ -159,7 +159,7 @@ public enum Combination implements Predicate<Deck> {
         public boolean apply(Deck deck) {
             Set<Iterable<Card>> hands = generateAllHands(deck);
             for (Iterable<Card> hand : hands) {
-                if (suitCounts(Multimaps.index(hand, Card.TO_SUIT)).equals(ImmutableMultiset.of(2, 2, 1))){
+                if (counts(Multimaps.index(hand, Card.TO_RANK)).equals(ImmutableMultiset.of(2, 2, 1))){
                     return true;
                 }
             }
