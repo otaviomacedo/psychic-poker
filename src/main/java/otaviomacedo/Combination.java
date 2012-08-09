@@ -7,7 +7,11 @@ import com.google.common.collect.*;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newHashSetWithExpectedSize;
 
@@ -36,8 +40,9 @@ public enum Combination implements Predicate<Deck> {
         public boolean apply(Deck deck) {
             Set<Iterable<Card>> hands = generateAllHands(deck);
             for (Iterable<Card> hand : hands) {
-                for (Card.Suit suit : Card.Suit.values()) {
-                    if (Iterables.frequency(hand, suit) == 4) {
+                ImmutableListMultimap<Rank, Card> index = Multimaps.index(hand, Card.TO_RANK);
+                for (Rank rank : index.keySet()) {
+                    if (frequency(hand, rank) == 4) {
                         return true;
                     }
                 }
@@ -48,6 +53,10 @@ public enum Combination implements Predicate<Deck> {
         @Override
         public String toString() {
             return "four-of-a-kind";
+        }
+
+        private int frequency(Iterable<Card> cards, Rank rank){
+            return size(Iterables.filter(transform(cards, Card.TO_RANK), equalTo(rank)));
         }
     },
 
@@ -238,17 +247,17 @@ public enum Combination implements Predicate<Deck> {
     }
 
     private static boolean thereAreNSuits(Iterable<Card> hand, int count) {
-        return ImmutableSet.copyOf(Iterables.transform(hand, Card.TO_SUIT)).size() == count;
+        return ImmutableSet.copyOf(transform(hand, Card.TO_SUIT)).size() == count;
     }
 
     private static boolean thereAreAtLeastNSuits(Iterable<Card> hand, int count) {
-        return ImmutableSet.copyOf(Iterables.transform(hand, Card.TO_SUIT)).size() >= count;
+        return ImmutableSet.copyOf(transform(hand, Card.TO_SUIT)).size() >= count;
     }
 
     private static final List<List<Integer>> REPLACEMENT_LISTS = replacementLists();
 
     private static Set<Iterable<Card>> generateAllHands(Deck deck) {
-        Set<Iterable<Card>> hands = newHashSetWithExpectedSize((int)Math.pow(2, Iterables.size(deck)) - 1);
+        Set<Iterable<Card>> hands = newHashSetWithExpectedSize((int)Math.pow(2, size(deck)) - 1);
         List<Card> originalHand = ImmutableList.copyOf(Iterables.limit(deck, 5));
         List<Card> availableCards = ImmutableList.copyOf(Iterables.skip(deck, 5));
 

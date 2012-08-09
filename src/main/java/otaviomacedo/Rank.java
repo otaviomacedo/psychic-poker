@@ -1,5 +1,7 @@
 package otaviomacedo;
 
+import com.google.common.base.Objects;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,5 +35,20 @@ public class Rank implements Comparable<Rank>{
     @Override
     public String toString() {
         return String.valueOf(code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(code);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Rank) {
+            final Rank other = (Rank) obj;
+            return Objects.equal(code, other.code);
+        } else {
+            return false;
+        }
     }
 }

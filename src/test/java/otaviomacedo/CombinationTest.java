@@ -16,6 +16,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static otaviomacedo.Combination.FOUR_OF_A_KIND;
 import static otaviomacedo.Combination.STRAIGHT_FLUSH;
 
 public class CombinationTest {
@@ -37,8 +38,15 @@ public class CombinationTest {
     @Test
     public void validFourOfAKind() throws Exception {
         combinationAppliesToCards(
-                STRAIGHT_FLUSH,
+                FOUR_OF_A_KIND,
                 "2H", "2S", "3H", "3S", "3C", "2D", "3D", "6C", "9C", "TH");
+    }
+
+    @Test
+    public void invalidFourOfAKind() throws Exception {
+        combinationDoesNotApplyToCards(
+                FOUR_OF_A_KIND,
+                "2H", "2S", "3H", "3S", "AC", "2D", "3D", "6C", "9C", "TH");
     }
 
     private static void combinationAppliesToCards(Combination combination, String... codes) {

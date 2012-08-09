@@ -30,7 +30,7 @@ public class Card implements Comparable<Card> {
         }
     };
 
-    public static Function<Card, Rank> TO_VALUE = new Function<Card, Rank>() {
+    public static Function<Card, Rank> TO_RANK = new Function<Card, Rank>() {
         @Override
         public Rank apply(Card card) {
             return card.getRank();
@@ -66,7 +66,7 @@ public class Card implements Comparable<Card> {
     }
 
     public static boolean areInSequence(List<Card> cards) {
-        return Rank.inSequence(Lists.transform(cards, TO_VALUE));
+        return Rank.inSequence(Lists.transform(cards, TO_RANK));
     }
 
     @Override
