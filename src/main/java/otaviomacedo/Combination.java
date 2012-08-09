@@ -69,7 +69,7 @@ public enum Combination implements Predicate<Deck> {
         public boolean apply(Deck deck) {
             Set<Iterable<Card>> hands = generateAllHands(deck);
             for (Iterable<Card> hand : hands) {
-                if (suitCounts(Multimaps.index(hand, Card.TO_SUIT)).equals(ImmutableMultiset.of(2, 3))){
+                if (counts(Multimaps.index(hand, Card.TO_RANK)).equals(ImmutableMultiset.of(2, 3))){
                     return true;
                 }
             }
@@ -232,6 +232,14 @@ public enum Combination implements Predicate<Deck> {
 
     public int getValue() {
         return value;
+    }
+
+    private static <K> Multiset<Integer> counts(Multimap<K, ?> index){
+        Multiset<Integer> result = HashMultiset.create();
+        for (K key : index.keySet()) {
+            result.add(index.get(key).size());
+        }
+        return result;
     }
 
     private static Multiset<Integer> suitCounts(Multimap<Card.Suit, ?> index){

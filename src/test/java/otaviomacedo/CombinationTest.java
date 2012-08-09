@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.google.common.collect.Lists.asList;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 import static org.hamcrest.core.Is.is;
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static otaviomacedo.Combination.FOUR_OF_A_KIND;
+import static otaviomacedo.Combination.FULL_HOUSE;
 import static otaviomacedo.Combination.STRAIGHT_FLUSH;
 
 public class CombinationTest {
@@ -48,6 +50,21 @@ public class CombinationTest {
                 FOUR_OF_A_KIND,
                 "2H", "2S", "3H", "3S", "AC", "2D", "3D", "6C", "9C", "TH");
     }
+
+    @Test
+    public void validFullHouse() throws Exception {
+        combinationAppliesToCards(
+                FULL_HOUSE,
+                "2H", "2S", "3H", "3S", "3C", "2D", "9C", "3D", "6C", "TH");
+    }
+
+    @Test
+    public void invalidFullHouse() throws Exception {
+        combinationDoesNotApplyToCards(
+                FULL_HOUSE,
+                "2H", "4D", "2S", "3S", "9D", "4C", "9C", "TC", "TH", "3H");
+    }
+
 
     private static void combinationAppliesToCards(Combination combination, String... codes) {
         combinationAppliesToCards(combination, cards(codes), true);
