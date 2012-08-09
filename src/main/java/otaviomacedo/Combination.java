@@ -4,10 +4,12 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 
+import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newHashSetWithExpectedSize;
 
 public enum Combination implements Predicate<Deck> {
 
@@ -213,15 +215,6 @@ public enum Combination implements Predicate<Deck> {
         return Card.areInSequence(Ordering.natural().sortedCopy(hand));
     }
 
-    private static Predicate<Iterable<Card>> hasSize(final int count) {
-        return new Predicate<Iterable<Card>>() {
-            @Override
-            public boolean apply(Iterable<Card> cards) {
-                return Iterables.size(cards) == count;
-            }
-        };
-    }
-
     private int value;
 
     private Combination(int value) {
@@ -252,15 +245,54 @@ public enum Combination implements Predicate<Deck> {
         return ImmutableSet.copyOf(Iterables.transform(hand, Card.TO_SUIT)).size() >= count;
     }
 
-    private static Set<Iterable<Card>> generateAllHands(Deck deck) {
-        ImmutableList<Card> cards = ImmutableList.copyOf(deck);
-        Set<Iterable<Card>> hands = newHashSet();
-        int start = 0, end = 5;
+    private static final List<List<Integer>> REPLACEMENT_LISTS = replacementLists();
 
-        while (end <= cards.size()) {
-            hands.add(cards.subList(start++, end++));
+    private static Set<Iterable<Card>> generateAllHands(Deck deck) {
+        Set<Iterable<Card>> hands = newHashSetWithExpectedSize((int)Math.pow(2, Iterables.size(deck)) - 1);
+        List<Card> originalHand = ImmutableList.copyOf(Iterables.limit(deck, 5));
+        List<Card> availableCards = ImmutableList.copyOf(Iterables.skip(deck, 5));
+
+        for (List<Integer> points : REPLACEMENT_LISTS) {
+            List<Card> foo = newArrayList(originalHand);
+            for (int i = 0; i < points.size(); i++) {
+                foo.set(points.get(i), availableCards.get(i));
+            }
+            hands.add(foo);
         }
+
         return hands;
     }
+
+    private static List<List<Integer>> replacementLists(){
+        List<List<Integer>> list = Lists.<List<Integer>>newArrayList(
+                newArrayList(0),
+                newArrayList(1),
+                newArrayList(2),
+                newArrayList(3),
+                newArrayList(4));
+
+        for (int i = 1; i < 5; i++) {
+            list.addAll(derive(list));
+        }
+
+        return list;
+    }
+
+    private static List<List<Integer>> derive(List<List<Integer>> list) {
+        List<List<Integer>> result = newArrayList();
+        for (List<Integer> sublist : list) {
+            for (int i = sublist.get(sublist.size()-1) + 1; i < 5; i++) {
+                result.add(cons(sublist, i));
+            }
+        }
+        return result;
+    }
+
+    private static List<Integer> cons(List<Integer> sublist, int i) {
+        List<Integer> temp = newArrayList(sublist);
+        temp.add(i);
+        return temp;
+    }
+
 
 }

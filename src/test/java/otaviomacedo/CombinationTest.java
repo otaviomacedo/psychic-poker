@@ -1,47 +1,63 @@
 package otaviomacedo;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 
+import javax.annotation.concurrent.Immutable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static otaviomacedo.Combination.STRAIGHT_FLUSH;
 
 public class CombinationTest {
 
-//    TH JH QC QD QS QH KH AH 2S 6S
-
-//    'A', 'K', 'Q', 'J', 'T'
-
     @Test
     public void validStraightFlush() throws Exception {
         combinationAppliesToCards(
                 STRAIGHT_FLUSH,
-                new Card("AH"), new Card("KH"), new Card("QH"), new Card("JH"), new Card("TH"));
+                "TH", "JH", "QC", "QD", "QS", "QH", "KH", "AH", "2S", "6S");
     }
 
     @Test
-    public void invalidStraightFlushWhenNotInSequence() throws Exception {
+    public void invalidStraightFlush() throws Exception {
         combinationDoesNotApplyToCards(
                 STRAIGHT_FLUSH,
-                new Card("AH"), new Card("JH"), new Card("TH"), new Card("KH"), new Card("QH"));
+                "TS", "JH", "QC", "QD", "QS", "QH", "KH", "AH", "2S", "6S");
     }
 
     @Test
-    public void invalidStraightFlushWhenMoreThanOneSuit() throws Exception {
-        combinationDoesNotApplyToCards(
+    public void validFourOfAKind() throws Exception {
+        combinationAppliesToCards(
                 STRAIGHT_FLUSH,
-                new Card("AH"), new Card("JD"), new Card("TH"), new Card("KH"), new Card("QH"));
+                "2H", "2S", "3H", "3S", "3C", "2D", "3D", "6C", "9C", "TH");
     }
 
-
-    private static void combinationAppliesToCards(Combination combination, Card...cards){
-        assertTrue(combination.apply(new Deck(Arrays.asList(cards))));
+    private static void combinationAppliesToCards(Combination combination, String... codes) {
+        combinationAppliesToCards(combination, cards(codes), true);
     }
 
-    private static void combinationDoesNotApplyToCards(Combination combination, Card...cards){
-        assertFalse(combination.apply(new Deck(Arrays.asList(cards))));
+    private static void combinationDoesNotApplyToCards(Combination combination, String... codes) {
+        combinationAppliesToCards(combination, cards(codes), false);
     }
 
+    private static List<Card> cards(String[] codes) {
+        List<Card> cards = newArrayListWithExpectedSize(codes.length);
+        for (String code : codes) {
+            cards.add(new Card(code));
+        }
+        return cards;
+    }
+
+    private static void combinationAppliesToCards(Combination combination, List<Card> cards, boolean applies) {
+        assertThat(combination.apply(new Deck(cards)), is(applies));
+    }
 }
