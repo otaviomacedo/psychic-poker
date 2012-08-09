@@ -4,11 +4,9 @@ package otaviomacedo;
 import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import java.util.List;
-import java.util.Map;
 
 public class Card implements Comparable<Card> {
     public static enum Suit {
@@ -23,7 +21,6 @@ public class Card implements Comparable<Card> {
         public static Suit forCode(char c) {
             return CODES.get(c);
         }
-
 
         @Override
         public String toString() {

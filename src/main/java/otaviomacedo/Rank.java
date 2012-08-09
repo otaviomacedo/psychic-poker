@@ -35,7 +35,6 @@ public class Rank implements Comparable<Rank>{
 
     public static boolean inAlternativeSequence(List<Rank> ranks){
         return inSeq(ranks, ALTERNATIVE_SORTED_VALUES);
-
     }
 
     private static boolean inSeq(List<Rank> ranks, List<Character> reference){

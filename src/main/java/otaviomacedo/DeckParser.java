@@ -1,7 +1,6 @@
 package otaviomacedo;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,8 +11,12 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
 
+/**
+ * Parses the input provided by a reader and transforms each line into a deck of cards.
+ */
 public class DeckParser implements Iterable<Deck> {
 
+    //TODO This list grows exponentially. So it's a better idea to generate each deck lazily.
     private final List<Deck> decks = newArrayList();
 
     public DeckParser(Reader r) throws IOException {
