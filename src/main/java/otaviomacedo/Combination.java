@@ -11,12 +11,15 @@ import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.filter;
-import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newHashSetWithExpectedSize;
 
 public enum Combination implements Predicate<Deck> {
 
+    /**
+     * A straight flush is a hand that contains five cards in sequence, all of the same
+     * suit, such as Q♣ J♣ 10♣ 9♣ 8♣(a hand that meets the requirement of both a straight
+     * and a flush).
+     */
     STRAIGHT_FLUSH(9) {
         @Override
         public boolean apply(Deck deck) {
@@ -35,6 +38,10 @@ public enum Combination implements Predicate<Deck> {
         }
     },
 
+    /**
+     * Four of a kind, also known as quads or poker, is a poker hand such as 9♣ 9♠ 9♦ 9♥
+     * J♥, that contains all four cards of one rank and any other (unmatched) card.
+     */
     FOUR_OF_A_KIND(8) {
         @Override
         public boolean apply(Deck deck) {
@@ -55,7 +62,7 @@ public enum Combination implements Predicate<Deck> {
             return "four-of-a-kind";
         }
 
-        private int frequency(Iterable<Card> cards, Rank rank){
+        private int frequency(Iterable<Card> cards, Rank rank) {
             return size(Iterables.filter(transform(cards, Card.TO_RANK), equalTo(rank)));
         }
     },
@@ -67,13 +74,7 @@ public enum Combination implements Predicate<Deck> {
     FULL_HOUSE(7) {
         @Override
         public boolean apply(Deck deck) {
-            Set<Iterable<Card>> hands = generateAllHands(deck);
-            for (Iterable<Card> hand : hands) {
-                if (counts(Multimaps.index(hand, Card.TO_RANK)).equals(ImmutableMultiset.of(2, 3))){
-                    return true;
-                }
-            }
-            return false;
+            return countingRule(deck, ImmutableMultiset.of(2, 3));
         }
 
         @Override
@@ -134,13 +135,7 @@ public enum Combination implements Predicate<Deck> {
     THREE_OF_A_KIND(4) {
         @Override
         public boolean apply(Deck deck) {
-            Set<Iterable<Card>> hands = generateAllHands(deck);
-            for (Iterable<Card> hand : hands) {
-                if (counts(Multimaps.index(hand, Card.TO_RANK)).equals(ImmutableMultiset.of(3, 1, 1))){
-                    return true;
-                }
-            }
-            return false;
+            return countingRule(deck, ImmutableMultiset.of(3, 1, 1));
         }
 
         @Override
@@ -157,13 +152,7 @@ public enum Combination implements Predicate<Deck> {
     TWO_PAIRS(3) {
         @Override
         public boolean apply(Deck deck) {
-            Set<Iterable<Card>> hands = generateAllHands(deck);
-            for (Iterable<Card> hand : hands) {
-                if (counts(Multimaps.index(hand, Card.TO_RANK)).equals(ImmutableMultiset.of(2, 2, 1))){
-                    return true;
-                }
-            }
-            return false;
+            return countingRule(deck, ImmutableMultiset.of(2, 2, 1));
         }
 
         @Override
@@ -179,13 +168,7 @@ public enum Combination implements Predicate<Deck> {
     ONE_PAIR(2) {
         @Override
         public boolean apply(Deck deck) {
-            Set<Iterable<Card>> hands = generateAllHands(deck);
-            for (Iterable<Card> hand : hands) {
-                if (counts(Multimaps.index(hand, Card.TO_RANK)).equals(ImmutableMultiset.of(2, 1, 1, 1))){
-                    return true;
-                }
-            }
-            return false;
+            return countingRule(deck, ImmutableMultiset.of(2, 1, 1, 1));
         }
 
         @Override
@@ -210,7 +193,17 @@ public enum Combination implements Predicate<Deck> {
         }
     };
 
-    public static Iterable<Combination> inDescendingOrder(){
+    private static boolean countingRule(Deck deck, Multiset<Integer> expected) {
+        Set<Iterable<Card>> hands = generateAllHands(deck);
+        for (Iterable<Card> hand : hands) {
+            if (counts(Multimaps.index(hand, Card.TO_RANK)).equals(expected)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Iterable<Combination> inDescendingOrder() {
         return Ordering.natural().reverse().onResultOf(new Function<Combination, Integer>() {
             @Override
             public Integer apply(Combination combination) {
@@ -238,18 +231,10 @@ public enum Combination implements Predicate<Deck> {
         return value;
     }
 
-    private static <K> Multiset<Integer> counts(Multimap<K, ?> index){
+    private static <K> Multiset<Integer> counts(Multimap<K, ?> index) {
         Multiset<Integer> result = HashMultiset.create();
         for (K key : index.keySet()) {
             result.add(index.get(key).size());
-        }
-        return result;
-    }
-
-    private static Multiset<Integer> suitCounts(Multimap<Card.Suit, ?> index){
-        Multiset<Integer> result = HashMultiset.create();
-        for (Card.Suit suit : index.keySet()) {
-            result.add(index.get(suit).size());
         }
         return result;
     }
@@ -269,7 +254,7 @@ public enum Combination implements Predicate<Deck> {
     private static final List<List<Integer>> REPLACEMENT_LISTS = replacementLists();
 
     private static Set<Iterable<Card>> generateAllHands(Deck deck) {
-        Set<Iterable<Card>> hands = newHashSetWithExpectedSize((int)Math.pow(2, size(deck)) - 1);
+        Set<Iterable<Card>> hands = newHashSetWithExpectedSize((int) Math.pow(2, size(deck)) - 1);
         List<Card> originalHand = ImmutableList.copyOf(Iterables.limit(deck, 5));
         List<Card> availableCards = ImmutableList.copyOf(Iterables.skip(deck, 5));
 
@@ -284,7 +269,7 @@ public enum Combination implements Predicate<Deck> {
         return hands;
     }
 
-    private static List<List<Integer>> replacementLists(){
+    private static List<List<Integer>> replacementLists() {
         List<List<Integer>> list = Lists.<List<Integer>>newArrayList(
                 newArrayList(0),
                 newArrayList(1),
@@ -302,7 +287,7 @@ public enum Combination implements Predicate<Deck> {
     private static List<List<Integer>> derive(List<List<Integer>> list) {
         List<List<Integer>> result = newArrayList();
         for (List<Integer> sublist : list) {
-            for (int i = sublist.get(sublist.size()-1) + 1; i < 5; i++) {
+            for (int i = sublist.get(sublist.size() - 1) + 1; i < 5; i++) {
                 result.add(cons(sublist, i));
             }
         }
@@ -314,6 +299,4 @@ public enum Combination implements Predicate<Deck> {
         temp.add(i);
         return temp;
     }
-
-
 }

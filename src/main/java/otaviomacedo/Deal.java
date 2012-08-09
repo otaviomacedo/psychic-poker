@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 public class Deal {
     private final Deck deck;
 
-
     public Deal(Deck deck) {
         this.deck = deck;
     }
@@ -21,7 +20,4 @@ public class Deal {
         //Just to return something meaningful and safe. But the method should never reach this point.
         return Iterables.getLast(combinations);
     }
-
-
-
 }
