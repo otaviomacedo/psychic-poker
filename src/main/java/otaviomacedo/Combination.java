@@ -221,11 +221,11 @@ public enum Combination implements Predicate<Deck> {
 
 
     private static boolean cardsAreInSequence(Iterable<Card> hand) {
-        return Card.areInSequence(Ordering.natural().sortedCopy(hand));
+        return Card.areInSequence(ImmutableList.copyOf(hand));
     }
 
     private static boolean cardsAreInAlternativeSequence(Iterable<Card> hand) {
-        return Card.areInAlternativeSequence(Ordering.natural().sortedCopy(hand));
+        return Card.areInAlternativeSequence(ImmutableList.copyOf(hand));
     }
 
     private int value;

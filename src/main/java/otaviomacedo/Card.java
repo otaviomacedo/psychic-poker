@@ -2,6 +2,8 @@ package otaviomacedo;
 
 
 import com.google.common.base.Function;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -12,7 +14,7 @@ public class Card implements Comparable<Card> {
     public static enum Suit {
         CLUBS, DIAMONDS, HEARTS, SPADES;
 
-        private static Map<Character, Suit> CODES = ImmutableMap.of(
+        private static BiMap<Character, Suit> CODES = ImmutableBiMap.of(
                 'C', CLUBS,
                 'D', DIAMONDS,
                 'H', HEARTS,
@@ -20,6 +22,12 @@ public class Card implements Comparable<Card> {
 
         public static Suit forCode(char c) {
             return CODES.get(c);
+        }
+
+
+        @Override
+        public String toString() {
+            return String.valueOf(CODES.inverse().get(this));
         }
     }
 

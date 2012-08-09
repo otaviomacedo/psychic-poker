@@ -1,6 +1,8 @@
 package otaviomacedo;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.collect.Ordering;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +12,13 @@ public class Rank implements Comparable<Rank>{
     private static final List<Character> SORTED_VALUES = Arrays.asList('A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2');
     private static final List<Character> ALTERNATIVE_SORTED_VALUES = Arrays.asList('K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'A');
     private final char code;
+
+    public static Function<Rank, Character> TO_CODE = new Function<Rank, Character>() {
+        @Override
+        public Character apply(Rank rank) {
+            return rank.code;
+        }
+    };
 
     public Rank(char code) {
         this.code = code;
@@ -21,17 +30,22 @@ public class Rank implements Comparable<Rank>{
     }
 
     public static boolean inSequence(List<Rank> ranks){
-        for (int i = 1; i < ranks.size(); i++) {
-            if (ranks.get(i).index(SORTED_VALUES) > ranks.get(i-1).index(SORTED_VALUES) + 1){
-                return false;
-            }
-        }
-        return true;
+        return inSeq(ranks, SORTED_VALUES);
     }
 
     public static boolean inAlternativeSequence(List<Rank> ranks){
-        for (int i = 1; i < ranks.size(); i++) {
-            if (ranks.get(i).index(ALTERNATIVE_SORTED_VALUES) > ranks.get(i-1).index(ALTERNATIVE_SORTED_VALUES) + 1){
+        return inSeq(ranks, ALTERNATIVE_SORTED_VALUES);
+
+    }
+
+    private static boolean inSeq(List<Rank> ranks, List<Character> reference){
+        List<Rank> sorted = Ordering
+                .explicit(reference)
+                .onResultOf(Rank.TO_CODE)
+                .sortedCopy(ranks);
+
+        for (int i = 1; i < sorted.size(); i++) {
+            if (sorted.get(i).index(reference) != sorted.get(i-1).index(reference) + 1){
                 return false;
             }
         }

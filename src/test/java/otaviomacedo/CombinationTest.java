@@ -81,7 +81,13 @@ public class CombinationTest {
                 "6S", "2S", "9C", "3S", "KD", "5S", "TH", "TD", "AD", "4S");
     }
 
-    //    'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'
+    @Test
+    public void anotherInvalidStraight() throws Exception {
+        combinationDoesNotApplyToCards(
+                STRAIGHT,
+                "AH", "2C", "9S", "AD", "3C", "QH", "KS", "JS", "JD", "KD");
+    }
+
     @Test
     public void validThreeOfAKind() throws Exception {
         combinationAppliesToCards(
