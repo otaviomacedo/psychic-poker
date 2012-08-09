@@ -22,14 +22,8 @@ public enum Combination implements Predicate<Deck> {
      */
     STRAIGHT_FLUSH(9) {
         @Override
-        public boolean apply(Deck deck) {
-            Set<Iterable<Card>> hands = generateAllHands(deck);
-            for (Iterable<Card> hand : hands) {
-                if (thereIsOnlyOneSuit(hand) && (cardsAreInSequence(hand) || cardsAreInAlternativeSequence(hand))) {
-                    return true;
-                }
-            }
-            return false;
+        protected boolean validate(Iterable<Card> hand) {
+            return thereIsOnlyOneSuit(hand) && (cardsAreInSequence(hand) || cardsAreInAlternativeSequence(hand));
         }
 
         @Override
@@ -44,14 +38,11 @@ public enum Combination implements Predicate<Deck> {
      */
     FOUR_OF_A_KIND(8) {
         @Override
-        public boolean apply(Deck deck) {
-            Set<Iterable<Card>> hands = generateAllHands(deck);
-            for (Iterable<Card> hand : hands) {
-                ImmutableListMultimap<Rank, Card> index = Multimaps.index(hand, Card.TO_RANK);
-                for (Rank rank : index.keySet()) {
-                    if (frequency(hand, rank) == 4) {
-                        return true;
-                    }
+        protected boolean validate(Iterable<Card> hand) {
+            ImmutableListMultimap<Rank, Card> index = Multimaps.index(hand, Card.TO_RANK);
+            for (Rank rank : index.keySet()) {
+                if (frequency(hand, rank) == 4) {
+                    return true;
                 }
             }
             return false;
@@ -73,8 +64,8 @@ public enum Combination implements Predicate<Deck> {
      */
     FULL_HOUSE(7) {
         @Override
-        public boolean apply(Deck deck) {
-            return countingRule(deck, ImmutableMultiset.of(2, 3));
+        protected boolean validate(Iterable<Card> hand) {
+            return countingRule(hand, ImmutableMultiset.of(2, 3));
         }
 
         @Override
@@ -89,14 +80,8 @@ public enum Combination implements Predicate<Deck> {
      */
     FLUSH(6) {
         @Override
-        public boolean apply(Deck deck) {
-            Set<Iterable<Card>> hands = generateAllHands(deck);
-            for (Iterable<Card> hand : hands) {
-                if (thereIsOnlyOneSuit(hand) && !cardsAreInSequence(hand)) {
-                    return true;
-                }
-            }
-            return false;
+        protected boolean validate(Iterable<Card> hand) {
+            return thereIsOnlyOneSuit(hand) && !cardsAreInSequence(hand);
         }
 
         @Override
@@ -111,14 +96,8 @@ public enum Combination implements Predicate<Deck> {
      */
     STRAIGHT(5) {
         @Override
-        public boolean apply(Deck deck) {
-            Set<Iterable<Card>> hands = generateAllHands(deck);
-            for (Iterable<Card> hand : hands) {
-                if ((cardsAreInSequence(hand) || cardsAreInAlternativeSequence(hand)) && thereAreAtLeastNSuits(hand, 2)) {
-                    return true;
-                }
-            }
-            return false;
+        protected boolean validate(Iterable<Card> hand) {
+            return (cardsAreInSequence(hand) || cardsAreInAlternativeSequence(hand)) && thereAreAtLeastNSuits(hand, 2);
         }
 
         @Override
@@ -134,8 +113,8 @@ public enum Combination implements Predicate<Deck> {
      */
     THREE_OF_A_KIND(4) {
         @Override
-        public boolean apply(Deck deck) {
-            return countingRule(deck, ImmutableMultiset.of(3, 1, 1));
+        protected boolean validate(Iterable<Card> hand) {
+            return countingRule(hand, ImmutableMultiset.of(3, 1, 1));
         }
 
         @Override
@@ -151,8 +130,8 @@ public enum Combination implements Predicate<Deck> {
      */
     TWO_PAIRS(3) {
         @Override
-        public boolean apply(Deck deck) {
-            return countingRule(deck, ImmutableMultiset.of(2, 2, 1));
+        protected boolean validate(Iterable<Card> hand) {
+            return countingRule(hand, ImmutableMultiset.of(2, 2, 1));
         }
 
         @Override
@@ -167,8 +146,8 @@ public enum Combination implements Predicate<Deck> {
      */
     ONE_PAIR(2) {
         @Override
-        public boolean apply(Deck deck) {
-            return countingRule(deck, ImmutableMultiset.of(2, 1, 1, 1));
+        protected boolean validate(Iterable<Card> hand) {
+            return countingRule(hand, ImmutableMultiset.of(2, 1, 1, 1));
         }
 
         @Override
@@ -183,7 +162,7 @@ public enum Combination implements Predicate<Deck> {
      */
     HIGHEST_CARD(1) {
         @Override
-        public boolean apply(Deck deck) {
+        protected boolean validate(Iterable<Card> hand) {
             return true;
         }
 
@@ -193,14 +172,8 @@ public enum Combination implements Predicate<Deck> {
         }
     };
 
-    private static boolean countingRule(Deck deck, Multiset<Integer> expected) {
-        Set<Iterable<Card>> hands = generateAllHands(deck);
-        for (Iterable<Card> hand : hands) {
-            if (counts(Multimaps.index(hand, Card.TO_RANK)).equals(expected)) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean countingRule(Iterable<Card> hand, Multiset<Integer> expected) {
+        return counts(Multimaps.index(hand, Card.TO_RANK)).equals(expected);
     }
 
     public static Iterable<Combination> inDescendingOrder() {
@@ -299,4 +272,18 @@ public enum Combination implements Predicate<Deck> {
         temp.add(i);
         return temp;
     }
+
+    @Override
+    public boolean apply(Deck deck) {
+        //TODO Move this to a constant, to improve performance.
+        Set<Iterable<Card>> hands = generateAllHands(deck);
+        for (Iterable<Card> hand : hands) {
+            if (validate(hand)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected abstract boolean validate(Iterable<Card> hand);
 }
