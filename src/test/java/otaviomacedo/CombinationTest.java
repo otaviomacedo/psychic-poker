@@ -1,25 +1,13 @@
 package otaviomacedo;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import org.junit.Test;
 
-import javax.annotation.concurrent.Immutable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static com.google.common.collect.Lists.asList;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static otaviomacedo.Combination.FOUR_OF_A_KIND;
-import static otaviomacedo.Combination.FULL_HOUSE;
-import static otaviomacedo.Combination.STRAIGHT_FLUSH;
+import static otaviomacedo.Combination.*;
 
 public class CombinationTest {
 
@@ -63,6 +51,20 @@ public class CombinationTest {
         combinationDoesNotApplyToCards(
                 FULL_HOUSE,
                 "2H", "4D", "2S", "3S", "9D", "4C", "9C", "TC", "TH", "3H");
+    }
+
+    @Test
+    public void validFlush() throws Exception {
+        combinationAppliesToCards(
+                FLUSH,
+                "2H", "AD", "5H", "AC", "7H", "AH", "6H", "9H", "4H", "3C");
+    }
+
+    @Test
+    public void invalidFlush() throws Exception {
+        combinationDoesNotApplyToCards(
+                FLUSH,
+                "3H", "AD", "5H", "AC", "7H", "AS", "6H", "9C", "4H", "3C");
     }
 
 
