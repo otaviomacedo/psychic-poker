@@ -3,27 +3,27 @@ package otaviomacedo;
 import java.util.Arrays;
 import java.util.List;
 
-public class Value implements Comparable<Value>{
+public class Rank implements Comparable<Rank>{
 
     private static final List<Character> SORTED_VALUES = Arrays.asList('A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2');
     private final char code;
 
-    public Value(char code) {
+    public Rank(char code) {
         this.code = code;
     }
 
     @Override
-    public int compareTo(Value o) {
+    public int compareTo(Rank o) {
         return this.index().compareTo(o.index());
     }
 
-    public static boolean inSequence(List<Value> values){
+    public static boolean inSequence(List<Rank> ranks){
         int sum = 0;
-        for (Value value : values) {
-            sum += value.index();
+        for (Rank rank : ranks) {
+            sum += rank.index();
         }
 
-        return sum == ((values.get(0).index() + values.get(values.size() - 1).index()) * values.size()) / 2;
+        return sum == ((ranks.get(0).index() + ranks.get(ranks.size() - 1).index()) * ranks.size()) / 2;
     }
 
     private Integer index(){

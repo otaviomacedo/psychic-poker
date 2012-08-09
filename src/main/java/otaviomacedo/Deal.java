@@ -1,14 +1,27 @@
 package otaviomacedo;
 
-/**
- * Created with IntelliJ IDEA. User: 04714835670 Date: 09/08/12 Time: 09:27 To change this
- * template use File | Settings | File Templates.
- */
+import com.google.common.collect.Iterables;
+
 public class Deal {
+    private final Deck deck;
+
+
     public Deal(Deck deck) {
+        this.deck = deck;
     }
 
     public Combination bestCombination() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        Iterable<Combination> combinations = Combination.inDescendingOrder();
+        for (Combination combination : combinations) {
+            if (combination.apply(deck)){
+                return combination;
+            }
+        }
+
+        //Just to return something meaningful and safe. But the method should never reach this point.
+        return Iterables.getLast(combinations);
     }
+
+
+
 }

@@ -12,8 +12,11 @@ public class Player {
 
     public void play(){
         for (Deck deck : deckSource) {
-            Deal deal = new Deal(deck);
-            resultWriter.write(deck, deal.bestCombination());
+            resultWriter.write(deck, bestCombination(deck));
         }
+    }
+
+    private Combination bestCombination(Deck deck) {
+        return new Deal(deck).bestCombination();
     }
 }
