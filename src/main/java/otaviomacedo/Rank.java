@@ -2,12 +2,18 @@ package otaviomacedo;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class Rank implements Comparable<Rank>{
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Iterables.transform;
+
+public class Rank implements Comparable<Rank> {
 
     private static final List<Character> SORTED_VALUES = Arrays.asList('A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2');
     private static final List<Character> ALTERNATIVE_SORTED_VALUES = Arrays.asList('K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'A');
@@ -20,6 +26,19 @@ public class Rank implements Comparable<Rank>{
         }
     };
 
+    public static Predicate<Rank> appearsNTimesInHand(final int frequency, final Iterable<Card> hand) {
+        return new Predicate<Rank>() {
+            @Override
+            public boolean apply(Rank rank) {
+                return frequency(hand, rank) == frequency;
+            }
+        };
+    }
+
+    private static int frequency(Iterable<Card> cards, Rank rank) {
+        return size(Iterables.filter(transform(cards, Card.TO_RANK), equalTo(rank)));
+    }
+
     public Rank(char code) {
         this.code = code;
     }
@@ -29,29 +48,29 @@ public class Rank implements Comparable<Rank>{
         return this.index(SORTED_VALUES).compareTo(o.index(SORTED_VALUES));
     }
 
-    public static boolean inSequence(List<Rank> ranks){
+    public static boolean inSequence(List<Rank> ranks) {
         return inSeq(ranks, SORTED_VALUES);
     }
 
-    public static boolean inAlternativeSequence(List<Rank> ranks){
+    public static boolean inAlternativeSequence(List<Rank> ranks) {
         return inSeq(ranks, ALTERNATIVE_SORTED_VALUES);
     }
 
-    private static boolean inSeq(List<Rank> ranks, List<Character> reference){
+    private static boolean inSeq(List<Rank> ranks, List<Character> reference) {
         List<Rank> sorted = Ordering
                 .explicit(reference)
                 .onResultOf(Rank.TO_CODE)
                 .sortedCopy(ranks);
 
         for (int i = 1; i < sorted.size(); i++) {
-            if (sorted.get(i).index(reference) != sorted.get(i-1).index(reference) + 1){
+            if (sorted.get(i).index(reference) != sorted.get(i - 1).index(reference) + 1) {
                 return false;
             }
         }
         return true;
     }
 
-    private Integer index(List<Character> reference){
+    private Integer index(List<Character> reference) {
         return reference.indexOf(this.code);
     }
 

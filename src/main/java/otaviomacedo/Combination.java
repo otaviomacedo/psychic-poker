@@ -6,10 +6,11 @@ import com.google.common.collect.*;
 
 import java.util.Set;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Multimaps.filterKeys;
+import static com.google.common.collect.Multimaps.index;
+import static otaviomacedo.Rank.appearsNTimesInHand;
 
 public enum Combination implements Predicate<Deck> {
 
@@ -23,11 +24,6 @@ public enum Combination implements Predicate<Deck> {
         protected boolean validate(Iterable<Card> hand) {
             return thereIsOnlyOneSuit(hand) && (cardsAreInSequence(hand) || cardsAreInAlternativeSequence(hand));
         }
-
-        @Override
-        public String toString() {
-            return "straight-flush";
-        }
     },
 
     /**
@@ -36,23 +32,16 @@ public enum Combination implements Predicate<Deck> {
      */
     FOUR_OF_A_KIND(8) {
         @Override
-        protected boolean validate(Iterable<Card> hand) {
-            ImmutableListMultimap<Rank, Card> index = Multimaps.index(hand, Card.TO_RANK);
-            for (Rank rank : index.keySet()) {
-                if (frequency(hand, rank) == 4) {
-                    return true;
-                }
-            }
-            return false;
+        protected boolean validate(final Iterable<Card> hand) {
+            return atLeastOneOfEach(ranks(hand), appearsNTimesInHand(4, hand));
         }
 
-        @Override
-        public String toString() {
-            return "four-of-a-kind";
+        private boolean atLeastOneOfEach(Multimap<Rank, Card> ranks, Predicate<Rank> rankPredicate) {
+            return !filterKeys(ranks, rankPredicate).isEmpty();
         }
 
-        private int frequency(Iterable<Card> cards, Rank rank) {
-            return size(Iterables.filter(transform(cards, Card.TO_RANK), equalTo(rank)));
+        private Multimap<Rank, Card> ranks(Iterable<Card> hand) {
+            return index(hand, Card.TO_RANK);
         }
     },
 
@@ -65,11 +54,6 @@ public enum Combination implements Predicate<Deck> {
         protected boolean validate(Iterable<Card> hand) {
             return countingRule(hand, ImmutableMultiset.of(2, 3));
         }
-
-        @Override
-        public String toString() {
-            return "full-house";
-        }
     },
 
     /**
@@ -81,11 +65,6 @@ public enum Combination implements Predicate<Deck> {
         protected boolean validate(Iterable<Card> hand) {
             return thereIsOnlyOneSuit(hand) && !cardsAreInSequence(hand);
         }
-
-        @Override
-        public String toString() {
-            return "flush";
-        }
     },
 
     /**
@@ -96,11 +75,6 @@ public enum Combination implements Predicate<Deck> {
         @Override
         protected boolean validate(Iterable<Card> hand) {
             return (cardsAreInSequence(hand) || cardsAreInAlternativeSequence(hand)) && thereAreAtLeastNSuits(hand, 2);
-        }
-
-        @Override
-        public String toString() {
-            return "straight";
         }
     },
 
@@ -114,11 +88,6 @@ public enum Combination implements Predicate<Deck> {
         protected boolean validate(Iterable<Card> hand) {
             return countingRule(hand, ImmutableMultiset.of(3, 1, 1));
         }
-
-        @Override
-        public String toString() {
-            return "three-of-a-kind";
-        }
     },
 
     /**
@@ -131,11 +100,6 @@ public enum Combination implements Predicate<Deck> {
         protected boolean validate(Iterable<Card> hand) {
             return countingRule(hand, ImmutableMultiset.of(2, 2, 1));
         }
-
-        @Override
-        public String toString() {
-            return "two-pairs";
-        }
     },
 
     /**
@@ -146,11 +110,6 @@ public enum Combination implements Predicate<Deck> {
         @Override
         protected boolean validate(Iterable<Card> hand) {
             return countingRule(hand, ImmutableMultiset.of(2, 1, 1, 1));
-        }
-
-        @Override
-        public String toString() {
-            return "one-pair";
         }
     },
 
@@ -163,15 +122,10 @@ public enum Combination implements Predicate<Deck> {
         protected boolean validate(Iterable<Card> hand) {
             return true;
         }
-
-        @Override
-        public String toString() {
-            return "highest-card";
-        }
     };
 
     private static boolean countingRule(Iterable<Card> hand, Multiset<Integer> expected) {
-        return counts(Multimaps.index(hand, Card.TO_RANK)).equals(expected);
+        return counts(index(hand, Card.TO_RANK)).equals(expected);
     }
 
     public static Iterable<Combination> inDescendingOrder() {
@@ -182,7 +136,6 @@ public enum Combination implements Predicate<Deck> {
             }
         }).sortedCopy(newArrayList(Combination.values()));
     }
-
 
     private static boolean cardsAreInSequence(Iterable<Card> hand) {
         return Card.areInSequence(ImmutableList.copyOf(hand));
@@ -234,4 +187,9 @@ public enum Combination implements Predicate<Deck> {
     }
 
     protected abstract boolean validate(Iterable<Card> hand);
+
+    @Override
+    public String toString() {
+        return this.name().toLowerCase().replace("_", "-");
+    }
 }
