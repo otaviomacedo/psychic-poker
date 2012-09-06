@@ -9,7 +9,6 @@ import java.io.StringReader;
 
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class PlayerTest {
 
