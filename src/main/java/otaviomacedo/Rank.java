@@ -3,21 +3,22 @@ package otaviomacedo;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
+import static otaviomacedo.Card.TO_RANK;
 
 public class Rank implements Comparable<Rank> {
 
-    private static final List<Character> SORTED_VALUES = Arrays.asList('A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2');
-    private static final List<Character> ALTERNATIVE_SORTED_VALUES = Arrays.asList('K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'A');
+    private static final List<Character> SORTED_VALUES = ImmutableList.of('A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2');
+    private static final List<Character> ALT_SORTED_VALUES = ImmutableList.of('K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'A');
     private final char code;
 
     public static Function<Rank, Character> TO_CODE = new Function<Rank, Character>() {
@@ -37,7 +38,7 @@ public class Rank implements Comparable<Rank> {
     }
 
     private static int frequency(Iterable<Card> cards, Rank rank) {
-        return size(Iterables.filter(transform(cards, Card.TO_RANK), equalTo(rank)));
+        return size(filter(transform(cards, TO_RANK), equalTo(rank)));
     }
 
     public Rank(char code) {
@@ -54,7 +55,7 @@ public class Rank implements Comparable<Rank> {
     }
 
     public static boolean inAlternativeSequence(List<Rank> ranks) {
-        return inSeq(ranks, ALTERNATIVE_SORTED_VALUES);
+        return inSeq(ranks, ALT_SORTED_VALUES);
     }
 
     private static boolean inSeq(List<Rank> ranks, List<Character> reference) {

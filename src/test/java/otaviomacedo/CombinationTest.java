@@ -131,7 +131,7 @@ public class CombinationTest {
     }
 
     @Test
-    public void everythingCanBeHighestCard() throws Exception {
+    public void anythingCanBeHighestCard() throws Exception {
         combinationAppliesToCards(
                 HIGHEST_CARD,
                 "AH", "2C", "9S", "8D", "3C", "QH", "KS", "5S", "JD", "4D");
