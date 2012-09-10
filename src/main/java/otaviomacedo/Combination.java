@@ -52,7 +52,7 @@ public enum Combination implements Predicate<Deck> {
     FULL_HOUSE(7) {
         @Override
         protected boolean validate(Iterable<Card> hand) {
-            return countingRule(hand, ImmutableMultiset.of(2, 3));
+            return countingRule(hand, 2, 3);
         }
     },
 
@@ -86,7 +86,7 @@ public enum Combination implements Predicate<Deck> {
     THREE_OF_A_KIND(4) {
         @Override
         protected boolean validate(Iterable<Card> hand) {
-            return countingRule(hand, ImmutableMultiset.of(3, 1, 1));
+            return countingRule(hand, 3, 1, 1);
         }
     },
 
@@ -98,7 +98,7 @@ public enum Combination implements Predicate<Deck> {
     TWO_PAIRS(3) {
         @Override
         protected boolean validate(Iterable<Card> hand) {
-            return countingRule(hand, ImmutableMultiset.of(2, 2, 1));
+            return countingRule(hand, 2, 2, 1);
         }
     },
 
@@ -109,7 +109,7 @@ public enum Combination implements Predicate<Deck> {
     ONE_PAIR(2) {
         @Override
         protected boolean validate(Iterable<Card> hand) {
-            return countingRule(hand, ImmutableMultiset.of(2, 1, 1, 1));
+            return countingRule(hand, 2, 1, 1, 1);
         }
     },
 
@@ -124,8 +124,8 @@ public enum Combination implements Predicate<Deck> {
         }
     };
 
-    private static boolean countingRule(Iterable<Card> hand, Multiset<Integer> expected) {
-        return counts(index(hand, Card.TO_RANK)).equals(expected);
+    private static boolean countingRule(Iterable<Card> hand, Integer... expected) {
+        return counts(index(hand, Card.TO_RANK)).equals(ImmutableMultiset.copyOf(expected));
     }
 
     public static Iterable<Combination> inDescendingOrder() {

@@ -9,6 +9,7 @@ import com.google.common.collect.Ordering;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
@@ -86,11 +87,6 @@ public class Rank implements Comparable<Rank> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Rank) {
-            final Rank other = (Rank) obj;
-            return Objects.equal(code, other.code);
-        } else {
-            return false;
-        }
+        return obj instanceof Rank && equal(code, ((Rank) obj).code);
     }
 }

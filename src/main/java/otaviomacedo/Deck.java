@@ -41,13 +41,13 @@ public class Deck implements Iterable<Card> {
         Set<Iterable<Card>> hands = newHashSetWithExpectedSize((int) Math.pow(2, size(deck)) - 1);
 
         for (byte mask = 1; mask <= (1 << HAND_SIZE); mask++) {
-            hands.add(apply(mask, deck));
+            hands.add(generateHands(mask, deck));
         }
 
         return hands;
     }
 
-    private static List<Card> apply(byte mask, List<Card> deck) {
+    private static List<Card> generateHands(byte mask, List<Card> deck) {
         return replace(deck.subList(0, HAND_SIZE), deck.subList(HAND_SIZE, deck.size()), mask);
     }
 
